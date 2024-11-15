@@ -63,11 +63,11 @@ async fn get_server_stats() -> Json<ServerStats> {
     let mut disks = DISKS.lock().unwrap();
     disks.refresh_list();
     let total_disk_space = disks.iter().map(|disk| disk.total_space()).sum::<u64>();
-    let used_disk_space = disks.iter().map(|disk| disk.available_space()).sum::<u64>();
-    let used_percentage = 100.0 - (used_disk_space as f32 / total_disk_space as f32) * 100.0;
+    let available_disk_space = disks.iter().map(|disk| disk.available_space()).sum::<u64>();
+    let used_percentage = 100.0 - (available_disk_space as f32 / total_disk_space as f32) * 100.0;
 
     let storage = UsageInfo {
-        used: format_bytes(total_disk_space - used_disk_space),
+        used: format_bytes(total_disk_space - available_disk_space),
         total: format_bytes(total_disk_space),
         percentage: format_percentage(used_percentage),
     };
